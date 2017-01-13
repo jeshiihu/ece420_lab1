@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
    thread_handles = malloc(thread_count*sizeof(pthread_t));
 
    printf("Enter n\n");
-   scanf("%d%d", &n);
+   scanf("%d", &n);
 
    A = malloc(n*n*sizeof(double));
    B = malloc(n*n*sizeof(double));
@@ -80,8 +80,8 @@ int main(int argc, char* argv[]) {
 	Print_matrix("The product matrix is: ", C, n);
 
 	free(A);
-	free(x);
-	free(y);
+	free(B);
+	free(C);
 
    return 0;
 }  /* main */
@@ -138,21 +138,24 @@ void Print_matrix( char* title, double A[], int n) {
  * Global in vars: A, B, n, thread_count
  * Global out var: C
  */
-void *Pth_mat_mult(void* rank) {
+void *pth_mat_mult(void* rank) {
    long my_rank = (long) rank;
    int i, j;
    int x, y;
 
    x = floor(my_rank/sqrt(thread_count));
-   y = my_rank % sqrt(thread_count);
+   y = (int)((int)my_rank % (int)sqrt(thread_count));
 
    int local_n = n/sqrt(thread_count); 
-   int my_first_row = my_rank*local_n;
-   int my_last_row = (my_rank+1)*local_n - 1;
+   //int my_first_row = my_rank*local_n;
+   //int my_last_row = (my_rank+1)*local_n - 1;
 
-   for (i = my_first_row; i <= my_last_row; i++) {
-	  for (j = 0; j < n; j++)
-		  C[x*n+y] += A[i*n+j]*B[j];
+   for (i = 0; i < local_n; i++) {
+	  C[x*n+y] = 0.0;
+   }
+
+   for (i = 0; i < local_n; i++) {
+	  C[x*n+y] += A[x*n+y]*B[i*n+y];
    }
 
    return NULL;
