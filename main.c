@@ -139,6 +139,7 @@ void Print_matrix( char* title, double A[], int n) {
  * Global out var: C
  */
 void *pth_mat_mult(void* rank) {
+
    long my_rank = (long) rank;
    int i, j;
    int x, y;
@@ -146,18 +147,18 @@ void *pth_mat_mult(void* rank) {
    x = floor(my_rank/sqrt(thread_count));
    y = (int)((int)my_rank % (int)sqrt(thread_count));
 
-   int local_n = n/sqrt(thread_count); 
+   // int local_n = n/sqrt(thread_count); 
    //int my_first_row = my_rank*local_n;
    //int my_last_row = (my_rank+1)*local_n - 1;
 
-   for (i = 0; i < local_n; i++) {
-	  C[x*n+y] = 0.0;
+	C[x*n+y] = 0.0;
+
+   for (i = 0; i < n; i++) {
+   	  printf("(%f)(%f) + ", A[x*n+i], B[i*n+y]);
+	  C[x*n+y] += A[x*n+i]*B[i*n+y];
    }
 
-   for (i = 0; i < local_n; i++) {
-	  C[x*n+y] += A[x*n+y]*B[i*n+y];
-   }
-
+   printf("Value at P_%d%d is %f\n", x, y, C[x*n+y]);
    return NULL;
 }  /* Pth_mat_vect */
 
