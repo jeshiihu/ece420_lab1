@@ -73,7 +73,7 @@ int Lab1_saveoutput(int **C, int *n, double Time)
 
     -----
     Example:
-    lab1_loadinput(C, &n, Time);
+    Lab1_saveoutput(C, &n, Time);
 */
 
     FILE* op;

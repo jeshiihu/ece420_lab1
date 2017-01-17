@@ -25,7 +25,7 @@ Duplicates=4
 # Create temporary directory for testing and copy all exacutable to there.
 mkdir tmp
 
-echo "Enter the exacutable file name for generating matrix and press [ENTER] (default is matrixgen):"
+echo "Enter the executable file name for generating matrix and press [ENTER] (default is matrixgen):"
 read mxgenEX
 if [ "$mxgenEX" = "" ]; then
 	mxgenEX=matrixgen
@@ -36,7 +36,7 @@ if [ ! -f $mxgenEX ]; then
 fi
 cp $mxgenEX tmp/
 
-echo "Enter the exacutable file name for serial testing and press [ENTER] (default is serialtester):"
+echo "Enter the executable file name for serial testing and press [ENTER] (default is serialtester):"
 read srltstEX
 if [ "$srltstEX" = "" ]; then
 	srltstEX=serialtester
@@ -47,7 +47,7 @@ if [ ! -f $srltstEX ]; then
 fi
 cp $srltstEX tmp/
 
-echo "Enter the exacutable file name for matrix multiplication and press [ENTER] (default is main):"
+echo "Enter the executable file name for matrix multiplication and press [ENTER] (default is main):"
 read mainEX
 if [ "$mainEX" = "" ]; then
 	mainEX=main

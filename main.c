@@ -33,18 +33,18 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <math.h>
+#include "lab1_IO.h"
+#include "timer.h"
 
 /* Global variables */
-int     thread_count;
-int     n;
-double* A;
-double* B;
-double* C;
+int thread_count;
+int n;
+int **A; int **B; int **C;
+double start; double end; double Time;
 
-/* Serial functions */
-void Usage(char* prog_name);
-void Read_matrix(char* prompt, double A[], int n);
-void Print_matrix(char* title, double A[], int n);
+//double* A;
+//double* B;
+//double* C;
 
 /* Parallel function */
 void *pth_mat_mult(void* rank);
@@ -53,82 +53,39 @@ int main(int argc, char* argv[]) {
    long       thread;
    pthread_t* thread_handles;
 
-   if (argc != 2) Usage(argv[0]);
+   Lab1_loadinput(&A, &B, &n);
+
+   C = malloc(n*sizeof(int *));
+
+   int i;
+
+   for (i = 0; i < n; i++){
+      C[i] = malloc(n * sizeof(int));
+   }
+
    thread_count = atoi(argv[1]);
    thread_handles = malloc(thread_count*sizeof(pthread_t));
 
-   printf("Enter n\n");
-   scanf("%d", &n);
-
-   A = malloc(n*n*sizeof(double));
-   B = malloc(n*n*sizeof(double));
-   C = malloc(n*n*sizeof(double));
-
-   Read_matrix("Enter the matrix A", A, n);
-   Print_matrix("We read", A, n);
-
-   Read_matrix("Enter the matrix B", B, n);
-   Print_matrix("We read", B, n);
-
+   GET_TIME(start);
    for (thread = 0; thread < thread_count; thread++)
 	  pthread_create(&thread_handles[thread], NULL,
 		 pth_mat_mult, (void*) thread);
 
    for (thread = 0; thread < thread_count; thread++)
 	  pthread_join(thread_handles[thread], NULL);
+   GET_TIME(end);
 
-	Print_matrix("The product matrix is: ", C, n);
+   Time = end - start;
 
-	free(A);
-	free(B);
+   Lab1_saveoutput(C, &n, Time);
+
+   free(A);
+   free(B);
 	free(C);
 
    return 0;
 }  /* main */
 
-
-/*------------------------------------------------------------------
- * Function:  Usage
- * Purpose:   print a message showing what the command line should
- *            be, and terminate
- * In arg :   prog_name
- */
-void Usage (char* prog_name) {
-   fprintf(stderr, "usage: %s <thread_count>\n", prog_name);
-   exit(0);
-}  /* Usage */
-
-/*------------------------------------------------------------------
- * Function:    Read_matrix
- * Purpose:     Read in the matrix
- * In args:     prompt, n
- * Out arg:     A/B
- */
-void Read_matrix(char* prompt, double A[], int n) {
-   int i, j;
-
-   printf("%s\n", prompt);
-   for (i = 0; i < n; i++) 
-	  for (j = 0; j < n; j++)
-		 scanf("%lf", &A[i*n+j]);
-}  /* Read_matrix */
-
-
-/*------------------------------------------------------------------
- * Function:    Print_matrix
- * Purpose:     Print the matrix
- * In args:     title, A, n
- */
-void Print_matrix( char* title, double A[], int n) {
-   int   i, j;
-
-   printf("%s\n", title);
-   for (i = 0; i < n; i++) {
-	  for (j = 0; j < n; j++)
-		 printf("%4.1f ", A[i*n+j]);
-	  printf("\n");
-   }
-}  /* Print_matrix */
 
 
 /*------------------------------------------------------------------
@@ -141,7 +98,7 @@ void Print_matrix( char* title, double A[], int n) {
 void *pth_mat_mult(void* rank) {
 
    long my_rank = (long) rank;
-   int i, j;
+   int i;
    int x, y;
 
    x = floor(my_rank/sqrt(thread_count));
@@ -151,14 +108,14 @@ void *pth_mat_mult(void* rank) {
    //int my_first_row = my_rank*local_n;
    //int my_last_row = (my_rank+1)*local_n - 1;
 
-	C[x*n+y] = 0.0;
+	C[x][y] = 0;
 
    for (i = 0; i < n; i++) {
-   	  printf("(%f)(%f) + ", A[x*n+i], B[i*n+y]);
-	  C[x*n+y] += A[x*n+i]*B[i*n+y];
+   	  //printf("(%d)(%d) + ", A[x*n+i], B[i*n+y]);
+	   C[x][y] += A[x][i]*B[i][y];
    }
 
-   printf("Value at P_%d%d is %f\n", x, y, C[x*n+y]);
+   //printf("Value at P_%d%d is %d\n", x, y, C[x*n+y]);
    return NULL;
 }  /* Pth_mat_vect */
 
