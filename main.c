@@ -12,7 +12,7 @@
  * Output:
  *     C: the product matrix
  *
- * Compile:  gcc -g -Wall -o main main.c -lpthread -lm
+ * Compile:  gcc -g -Wall -o main main.c lab1_IO.c -lpthread -lm
  * Usage:
  *     main <thread_count>
  *
