@@ -50,6 +50,7 @@ double start; double end; double Time;
 void *pth_mat_mult(void* rank);
 
 int main(int argc, char* argv[]) {
+
    long       thread;
    pthread_t* thread_handles;
 
@@ -98,7 +99,7 @@ int main(int argc, char* argv[]) {
 void *pth_mat_mult(void* rank) {
 
    long my_rank = (long) rank;
-   int i;
+   int i, j, k;
    int x, y;
 
    x = floor(my_rank/sqrt(thread_count));
@@ -107,13 +108,27 @@ void *pth_mat_mult(void* rank) {
    // int local_n = n/sqrt(thread_count); 
    //int my_first_row = my_rank*local_n;
    //int my_last_row = (my_rank+1)*local_n - 1;
+   int local_n = n/sqrt(thread_count);
+
+   int my_first_row = local_n*x;
+   int my_last_row = local_n*(x+1)-1;
+
+   int my_first_col = local_n*y;
+   int my_last_col = local_n*(y+1)-1;
 
 	C[x][y] = 0;
 
-   for (i = 0; i < n; i++) {
-   	  //printf("(%d)(%d) + ", A[x*n+i], B[i*n+y]);
-	   C[x][y] += A[x][i]*B[i][y];
+   for(i = my_first_row; i <= my_last_row; i++) {
+       for(j = my_first_col; j <= my_last_col; j++) {
+         C[i][j] = 0;
+
+         for(k = 0; k < n; k++) {
+            C[i][j] += A[i][k]*B[k][j];
+         }
+       }
    }
+
+
 
    //printf("Value at P_%d%d is %d\n", x, y, C[x*n+y]);
    return NULL;
