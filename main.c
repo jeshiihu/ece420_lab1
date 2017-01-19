@@ -105,9 +105,6 @@ void *pth_mat_mult(void* rank) {
    x = floor(my_rank/sqrt(thread_count));
    y = (int)((int)my_rank % (int)sqrt(thread_count));
 
-   // int local_n = n/sqrt(thread_count); 
-   //int my_first_row = my_rank*local_n;
-   //int my_last_row = (my_rank+1)*local_n - 1;
    int local_n = n/sqrt(thread_count);
 
    int my_first_row = local_n*x;
@@ -116,8 +113,6 @@ void *pth_mat_mult(void* rank) {
    int my_first_col = local_n*y;
    int my_last_col = local_n*(y+1)-1;
 
-	C[x][y] = 0;
-
    for(i = my_first_row; i <= my_last_row; i++) {
        for(j = my_first_col; j <= my_last_col; j++) {
          C[i][j] = 0;
@@ -125,14 +120,12 @@ void *pth_mat_mult(void* rank) {
          for(k = 0; k < n; k++) {
             C[i][j] += A[i][k]*B[k][j];
          }
+         printf("\n");
        }
    }
 
-
-
-   //printf("Value at P_%d%d is %d\n", x, y, C[x*n+y]);
    return NULL;
-}  /* Pth_mat_vect */
+}  /* Pth_mat_mult */
 
 
 

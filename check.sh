@@ -18,9 +18,12 @@
 # Welcome
 echo "=====Evaluation for Lab 1 code.====="
 # Parameters
-Sizes=(64 1024)
+# Sizes=(64 1024)
+# Cores=(1 4 16)
+# Duplicates=4
+Sizes=(4 16)
 Cores=(1 4 16)
-Duplicates=4
+Duplicates=3
 
 # Create temporary directory for testing and copy all exacutable to there.
 mkdir tmp
